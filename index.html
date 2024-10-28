@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maratha Dynasty MCQ Quiz</title>
+    <style>
+        /* Reset some default styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f0f8ff, #e6f7ff);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Accommodate fixed elements */
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Timer Styling */
+        .timer {
+            position: fixed;          /* Fixes the position relative to the viewport */
+            top: 20px;                /* Positions 20px from the top */
+            right: 20px;              /* Positions 20px from the right */
+            font-size: 1.5rem;        /* Sets a readable font size */
+            color: #d9534f;           /* Sets the text color (red) */
+            font-weight: bold;        /* Makes the text bold */
+            z-index: 1000;            /* Ensures the timer stays above other elements */
+            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent background */
+            padding: 10px 15px;       /* Adds padding around the timer text */
+            border-radius: 5px;       /* Rounds the corners of the timer box */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adds a subtle shadow for depth */
+        }
+
+        /* Question Map Sidebar Styling */
+        .question-map {
+            position: fixed;          
+            top: 80px;                /* Positioned below the timer */
+            right: 20px;               /* Positioned on the right */
+            width: 180px;              /* Increased width to accommodate 5 columns */
+            background-color: rgba(255, 255, 255, 0.9); 
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 999;             
+            max-height: 90vh;         
+            overflow-y: auto;         
+        }
+
+        .question-map h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+
+        /* Update #questionLinks to Use CSS Grid */
+        #questionLinks {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 5px; /* Adjust the spacing between links as needed */
+            justify-items: center; /* Centers the links within each grid cell */
+        }
+
+        /* Adjust .question-map .question-link Styling */
+        .question-map .question-link {
+            padding: 5px 0; /* Reduces vertical padding */
+            font-size: 0.9rem; /* Slightly smaller font size for better fit */
+            width: 100%; /* Ensures the link takes the full width of the grid cell */
+            box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+            border-radius: 4px; /* Maintains rounded corners */
+            text-align: center; /* Centers the text within the link */
+            background-color: #f8f9fa;
+            color: #007bff;
+            text-decoration: none;
+            border: 1px solid #007bff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .question-map .question-link:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Add Correct and Incorrect Classes for Highlighting */
+        .question-map .question-link.correct {
+            background-color: #28a745; /* Green background */
+            color: #fff; /* White text */
+            border-color: #28a745; /* Green border */
+        }
+
+        .question-map .question-link.incorrect {
+            background-color: #dc3545; /* Red background */
+            color: #fff; /* White text */
+            border-color: #dc3545; /* Red border */
+        }
+
+        /* Add Attempted Class for Highlighting */
+        .question-map .question-link.attempted {
+            background-color: #17a2b8; /* Blue background for attempted questions */
+            color: #fff; /* White text */
+            border-color: #17a2b8; /* Blue border */
+        }
+
+        /* Submit Button and Score Styling */
+        .question-map .submit-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .question-map .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .question-map .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .question-map .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .question-map .result {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #17a2b8;
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Quiz Container Styling */
+        .quiz-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            margin-right: 200px; /* Accommodates the question map sidebar on the right */
+            margin-top: 50px;     /* Maintains spacing from the top */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007bff;
+        }
+
+        .question {
+            margin-bottom: 25px;
+        }
+
+        .question p {
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 8px;
+            padding: 10px 15px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .options input[type="radio"] {
+            display: none;
+        }
+
+        .options input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .options label:hover {
+            background-color: #e6f0ff;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+
+        .submit-btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .result {
+            margin-top: 30px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            color: #17a2b8;
+        }
+
+        /* Feedback Message Styling */
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .feedback.right {
+            color: #28a745; /* Green for correct answers */
+        }
+
+        .feedback.wrong {
+            color: #dc3545; /* Red for incorrect answers */
+        }
+
+        .feedback.not-attempted {
+            color: #6c757d; /* Gray for not attempted */
+        }
+
+        /* Alert when time is low */
+        .alert {
+            animation: blink 1s steps(5, start) infinite;
+        }
+
+        @keyframes blink {
+            to {
+                visibility: hidden;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .quiz-container {
+                margin-right: 0; /* Removes right margin on small screens */
+            }
+
+            .question-map {
+                display: none; /* Hides the question map on small screens */
+            }
+
+            .toggle-question-map {
+                display: block; /* Shows toggle button on small screens */
+            }
+        }
+
+        /* Toggle Button for Question Map (Visible on Small Screens) */
+        .toggle-question-map {
+            position: fixed;
+            top: 20px;
+            right: 20px; /* Positioned on the right */
+            z-index: 1001;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: none; /* Hidden by default */
+        }
+
+        /* Active State for Question Map on Small Screens */
+        .question-map.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Timer Display -->
+    <div class="timer" id="timer">10:00</div>
+
+    <!-- Toggle Button for Question Map (Visible on Small Screens) -->
+    <button class="toggle-question-map" id="toggleQuestionMap">☰</button>
+
+    <!-- Question Map Sidebar -->
+    <div class="question-map" id="questionMap">
+        <h2>Question Map</h2>
+        <div id="questionLinks">
+            <!-- Question links will be injected here by JavaScript -->
+        </div>
+        <!-- Submit Button and Score Display Below the Question Links -->
+        <div class="submit-section">
+            <button type="button" class="submit-btn" id="submitBtn" onclick="checkAnswers()">Submit</button>
+            <div id="result" class="result"></div>
+        </div>
+    </div>
+
+    <div class="quiz-container">
+        <h1>Maratha Dynasty MCQ Quiz</h1>
+        
+        <form id="quizForm">
+            <!-- Questions will be injected here by JavaScript -->
+        </form>
+
+        <!-- Submit Button and Score Display Below the Questions List -->
+        <div class="submit-section">
+            <button type="button" class="submit-btn" id="submitBtnBelow" onclick="checkAnswers()">Submit</button>
+            <div id="resultBelow" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Declare shuffledQuestions globally
+        let shuffledQuestions = [];
+
+        // Replace the following array with your own questions
+        const questions = [
+  // 1. Chhatrapati Shivaji Maharaj (1630-1680 AD)
+  {
+    id: 'q1',
+    question: 'Where was Shivaji born?',
+    options: [
+      { text: 'Raigad', isCorrect: false },
+      { text: 'Sinhagad', isCorrect: false },
+      { text: 'Shivner Fort', isCorrect: true },
+      { text: 'Pune', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q2',
+    question: 'Who was Shivaji\'s mother?',
+    options: [
+      { text: 'Saibai', isCorrect: false },
+      { text: 'Jijabai', isCorrect: true },
+      { text: 'Tarabai', isCorrect: false },
+      { text: 'Jija Bai', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q3',
+    question: 'Father of Shivaji?',
+    options: [
+      { text: 'Shahaji Bhonsle', isCorrect: true },
+      { text: 'Dadaji Koddev', isCorrect: false },
+      { text: 'Adil Shah', isCorrect: false },
+      { text: 'Shahbaz Khan', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q4',
+    question: 'Guardian of Shivaji?',
+    options: [
+      { text: 'Ramdas Samarth', isCorrect: false },
+      { text: 'Dadaji Koddev', isCorrect: true },
+      { text: 'Afzal Khan', isCorrect: false },
+      { text: 'Shaista Khan', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q5',
+    question: 'Shivaji\'s spiritual teacher?',
+    options: [
+      { text: 'Ramdas Samarth', isCorrect: true },
+      { text: 'Tukaram', isCorrect: false },
+      { text: 'Eknath', isCorrect: false },
+      { text: 'Jñāneśvar', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q6',
+    question: 'First fort captured by Shivaji?',
+    options: [
+      { text: 'Raigad', isCorrect: false },
+      { text: 'Torana', isCorrect: true },
+      { text: 'Surat', isCorrect: false },
+      { text: 'Panhala', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q7',
+    question: 'Year Shivaji captured Raigad?',
+    options: [
+      { text: '1646', isCorrect: false },
+      { text: '1656', isCorrect: true },
+      { text: '1663', isCorrect: false },
+      { text: '1665', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q8',
+    question: 'Shivaji\'s capital after 1656?',
+    options: [
+      { text: 'Pune', isCorrect: false },
+      { text: 'Satara', isCorrect: false },
+      { text: 'Raigad', isCorrect: true },
+      { text: 'Surat', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q9',
+    question: 'Adil Shah was the ruler of which kingdom?',
+    options: [
+      { text: 'Bijapur', isCorrect: true },
+      { text: 'Ahmednagar', isCorrect: false },
+      { text: 'Hyderabad', isCorrect: false },
+      { text: 'Golkonda', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q10',
+    question: 'Who did Shivaji kill in 1659?',
+    options: [
+      { text: 'Shaista Khan', isCorrect: false },
+      { text: 'Afzal Khan', isCorrect: true },
+      { text: 'Adil Shah', isCorrect: false },
+      { text: 'Aurangzeb', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q11',
+    question: 'Adil Shah captured whom?',
+    options: [
+      { text: 'Shahu', isCorrect: false },
+      { text: 'Shahaji', isCorrect: true },
+      { text: 'Tarabai', isCorrect: false },
+      { text: 'Balaji Vishwanath', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q12',
+    question: 'Mughal commander sent in 1660?',
+    options: [
+      { text: 'Afzal Khan', isCorrect: false },
+      { text: 'Shaista Khan', isCorrect: true },
+      { text: 'Zulfikar Khan', isCorrect: false },
+      { text: 'Bahadur Shah', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q13',
+    question: 'Battle where Shivaji defeated Shaista Khan?',
+    options: [
+      { text: 'Wai', isCorrect: false },
+      { text: 'Palkheda', isCorrect: false },
+      { text: 'Pune', isCorrect: true },
+      { text: 'Kheda', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q14',
+    question: 'Year Shivaji looted Surat?',
+    options: [
+      { text: '1663', isCorrect: false },
+      { text: '1664', isCorrect: true },
+      { text: '1665', isCorrect: false },
+      { text: '1670', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q15',
+    question: 'Treaty ending Shivaji’s conflict with Mughals?',
+    options: [
+      { text: 'Treaty of Delhi', isCorrect: false },
+      { text: 'Treaty of Purandar', isCorrect: true },
+      { text: 'Treaty of Mungishiv', isCorrect: false },
+      { text: 'Treaty of Palkheda', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q16',
+    question: 'Shivaji was presented at whose court?',
+    options: [
+      { text: 'Adil Shah', isCorrect: false },
+      { text: 'Aurangzeb', isCorrect: true },
+      { text: 'Shaista Khan', isCorrect: false },
+      { text: 'Shahu', isCorrect: false }
+    ]
+  },
+
+  // 2. Administration: Ashtapradhan Mandal
+  {
+    id: 'q17',
+    question: 'Head of Ashtapradhan Mandal?',
+    options: [
+      { text: 'Amatya', isCorrect: false },
+      { text: 'Peshwa', isCorrect: true },
+      { text: 'Senapati', isCorrect: false },
+      { text: 'Sachiv', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q18',
+    question: 'Finance Minister in Ashtapradhan?',
+    options: [
+      { text: 'Mantri', isCorrect: false },
+      { text: 'Amatya', isCorrect: true },
+      { text: 'Sumant', isCorrect: false },
+      { text: 'Sar-Naubat', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q19',
+    question: 'Secretary in Ashtapradhan?',
+    options: [
+      { text: 'Sachiv', isCorrect: true },
+      { text: 'Mantri', isCorrect: false },
+      { text: 'Senapati', isCorrect: false },
+      { text: 'Nyayadhish', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q20',
+    question: 'Commander in Ashtapradhan?',
+    options: [
+      { text: 'Senapati', isCorrect: true },
+      { text: 'Peshwa', isCorrect: false },
+      { text: 'Mantri', isCorrect: false },
+      { text: 'Sumant', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q21',
+    question: 'Judge in Ashtapradhan Mandal?',
+    options: [
+      { text: 'Nyayadhish', isCorrect: true },
+      { text: 'Sar-Naubat', isCorrect: false },
+      { text: 'Sumant', isCorrect: false },
+      { text: 'Amatya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q22',
+    question: 'Intelligence Minister in Ashtapradhan?',
+    options: [
+      { text: 'Sumant', isCorrect: true },
+      { text: 'Mantri', isCorrect: false },
+      { text: 'Sar-Naubat', isCorrect: false },
+      { text: 'Peshwa', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q23',
+    question: 'Military Administrator in Ashtapradhan?',
+    options: [
+      { text: 'Senapati', isCorrect: false },
+      { text: 'Sar-Naubat', isCorrect: true },
+      { text: 'Mantri', isCorrect: false },
+      { text: 'Nyayadhish', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q24',
+    question: 'Role of Mantri in Ashtapradhan?',
+    options: [
+      { text: 'Finance', isCorrect: false },
+      { text: 'Counsel', isCorrect: true },
+      { text: 'Military', isCorrect: false },
+      { text: 'Justice', isCorrect: false }
+    ]
+  },
+
+  // 3. Shambhaji Bhonsle (1680-1689 AD)
+  {
+    id: 'q25',
+    question: 'Shambhaji succeeded whom?',
+    options: [
+      { text: 'Rajaram', isCorrect: false },
+      { text: 'Shahu', isCorrect: false },
+      { text: 'Shivaji', isCorrect: true },
+      { text: 'Baji Rao I', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q26',
+    question: 'Whose son did Saibai shelter?',
+    options: [
+      { text: 'Aurangzeb', isCorrect: false },
+      { text: 'Akbar', isCorrect: true },
+      { text: 'Shahaji', isCorrect: false },
+      { text: 'Shaista Khan', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q27',
+    question: 'Battle where Shambhaji was killed?',
+    options: [
+      { text: 'Wai', isCorrect: true },
+      { text: 'Palkheda', isCorrect: false },
+      { text: 'Kheda', isCorrect: false },
+      { text: 'Purandar', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q28',
+    question: 'Shambhaji’s son captured by whom?',
+    options: [
+      { text: 'Aurangzeb', isCorrect: true },
+      { text: 'Shaista Khan', isCorrect: false },
+      { text: 'Adil Shah', isCorrect: false },
+      { text: 'Zulfikar Khan', isCorrect: false }
+    ]
+  },
+
+  // 4. Rajaram Bhonsle (1689-1700 AD)
+  {
+    id: 'q29',
+    question: 'Age when Rajaram became ruler?',
+    options: [
+      { text: '15', isCorrect: false },
+      { text: '19', isCorrect: true },
+      { text: '25', isCorrect: false },
+      { text: '30', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q30',
+    question: 'New capital established by Rajaram?',
+    options: [
+      { text: 'Pune', isCorrect: false },
+      { text: 'Raigad', isCorrect: false },
+      { text: 'Satara', isCorrect: true },
+      { text: 'Surat', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q31',
+    question: 'Post created by Rajaram?',
+    options: [
+      { text: 'Peshwa', isCorrect: false },
+      { text: 'Delegate', isCorrect: true },
+      { text: 'Senapati', isCorrect: false },
+      { text: 'Amatya', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q32',
+    question: 'Who assassinated Rajaram?',
+    options: [
+      { text: 'Aurangzeb', isCorrect: false },
+      { text: 'Shaista Khan', isCorrect: false },
+      { text: 'Zulfikar Khan', isCorrect: true },
+      { text: 'Afzal Khan', isCorrect: false }
+    ]
+  },
+
+  // 5. Tarabai and Shahu Bhonsle (1700-1749 AD)
+  {
+    id: 'q33',
+    question: 'Role of Tarabai?',
+    options: [
+      { text: 'Wife of Shahu', isCorrect: false },
+      { text: 'Daughter of Rajaram', isCorrect: false },
+      { text: 'Wife of Rajaram', isCorrect: true },
+      { text: 'Mother of Shahu', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q34',
+    question: 'Year Shahu was released?',
+    options: [
+      { text: '1700', isCorrect: false },
+      { text: '1705', isCorrect: false },
+      { text: '1707', isCorrect: true },
+      { text: '1710', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q35',
+    question: 'Battle where Tarabai was defeated?',
+    options: [
+      { text: 'Kheda', isCorrect: true },
+      { text: 'Wai', isCorrect: false },
+      { text: 'Palkheda', isCorrect: false },
+      { text: 'Purandar', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q36',
+    question: 'Agreement after Battle of Kheda?',
+    options: [
+      { text: 'Division of state', isCorrect: true },
+      { text: 'Treaty of Purandar', isCorrect: false },
+      { text: 'Treaty of Delhi', isCorrect: false },
+      { text: 'Treaty of Durai Sarai', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q37',
+    question: 'Who supported Shahu in civil war?',
+    options: [
+      { text: 'Baji Rao I', isCorrect: false },
+      { text: 'Balaji Vishwanath', isCorrect: true },
+      { text: 'Balaji Bajirao', isCorrect: false },
+      { text: 'Nana Saheb', isCorrect: false }
+    ]
+  },
+
+  // 6. Shahu Bhonsle (1708-1749 AD)
+  {
+    id: 'q38',
+    question: 'Shahu gained throne with whose help?',
+    options: [
+      { text: 'Baji Rao I', isCorrect: false },
+      { text: 'Balaji Vishwanath', isCorrect: true },
+      { text: 'Tarabai', isCorrect: false },
+      { text: 'Shambhaji', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q39',
+    question: 'Year Peshwa role was established?',
+    options: [
+      { text: '1708', isCorrect: false },
+      { text: '1713', isCorrect: true },
+      { text: '1720', isCorrect: false },
+      { text: '1738', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q40',
+    question: 'Impact on Peshwa power?',
+    options: [
+      { text: 'Decreased', isCorrect: false },
+      { text: 'No change', isCorrect: false },
+      { text: 'Increased', isCorrect: true },
+      { text: 'Eliminated', isCorrect: false }
+    ]
+  },
+
+  // 7. Peshwa Period
+  // 7.1 Balaji Vishwanath (1713-1720 AD)
+  {
+    id: 'q41',
+    question: 'First Peshwa under Shahu?',
+    options: [
+      { text: 'Baji Rao I', isCorrect: false },
+      { text: 'Balaji Vishwanath', isCorrect: true },
+      { text: 'Balaji Bajirao', isCorrect: false },
+      { text: 'Nana Saheb', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q42',
+    question: 'Year Treaty of Delhi was signed?',
+    options: [
+      { text: '1713', isCorrect: false },
+      { text: '1719', isCorrect: true },
+      { text: '1728', isCorrect: false },
+      { text: '1738', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q43',
+    question: 'Rights granted to Marathas in Treaty of Delhi?',
+    options: [
+      { text: 'Collect taxes', isCorrect: true },
+      { text: 'Control forts', isCorrect: false },
+      { text: 'Build forts', isCorrect: false },
+      { text: 'Form alliances', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q44',
+    question: 'Balaji Vishwanath is known as?',
+    options: [
+      { text: 'Founder of Peshwa', isCorrect: false },
+      { text: 'Re-founder of Maratha', isCorrect: true },
+      { text: 'Father of Shahu', isCorrect: false },
+      { text: 'Conqueror of Malwa', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q45',
+    question: 'With whom did Balaji Vishwanath sign the Treaty of Delhi?',
+    options: [
+      { text: 'Aurangzeb', isCorrect: false },
+      { text: 'Sayyid brothers', isCorrect: true },
+      { text: 'Ahmad Shah Abdali', isCorrect: false },
+      { text: 'Shaista Khan', isCorrect: false }
+    ]
+  },
+
+  // 7.2 Baji Rao I (1720-1740 AD)
+  {
+    id: 'q46',
+    question: 'Which Peshwa never faced defeat in battle?',
+    options: [
+      { text: 'Balaji Vishwanath', isCorrect: false },
+      { text: 'Baji Rao I', isCorrect: true },
+      { text: 'Balaji Bajirao', isCorrect: false },
+      { text: 'Shahu', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q47',
+    question: 'Policy initiated by Baji Rao I?',
+    options: [
+      { text: 'Southern expansion', isCorrect: false },
+      { text: 'Trade agreements', isCorrect: false },
+      { text: 'Northern expansion', isCorrect: true },
+      { text: 'Guerrilla warfare', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q48',
+    question: 'Principle propounded by Baji Rao I?',
+    options: [
+      { text: 'Swarajya', isCorrect: false },
+      { text: 'Hindu Padpadshahi', isCorrect: true },
+      { text: 'Chauth collection', isCorrect: false },
+      { text: 'Raigad governance', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q49',
+    question: 'Battle where Marathas defeated Nizam in 1728?',
+    options: [
+      { text: 'Palkheda', isCorrect: true },
+      { text: 'Wai', isCorrect: false },
+      { text: 'Kheda', isCorrect: false },
+      { text: 'Purandar', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q50',
+    question: 'Year Treaty of Durai Sarai was signed?',
+    options: [
+      { text: '1719', isCorrect: false },
+      { text: '1728', isCorrect: false },
+      { text: '1738', isCorrect: true },
+      { text: '1740', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q51',
+    question: 'Region secured by Marathas in 1738?',
+    options: [
+      { text: 'Malwa', isCorrect: true },
+      { text: 'Gujarat', isCorrect: false },
+      { text: 'Deccan', isCorrect: false },
+      { text: 'Bengal', isCorrect: false }
+    ]
+  },
+
+  // 8. Balaji Bajirao (Baji Rao II) (1761-1803 AD)
+  {
+    id: 'q52',
+    question: 'Balaji Bajirao is also known as?',
+    options: [
+      { text: 'Balaji Vishwanath', isCorrect: false },
+      { text: 'Nana Saheb', isCorrect: true },
+      { text: 'Shahu', isCorrect: false },
+      { text: 'Baji Rao I', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q53',
+    question: 'Which battle in 1761 led to Maratha downfall?',
+    options: [
+      { text: 'Palkheda', isCorrect: false },
+      { text: 'Panipat', isCorrect: true },
+      { text: 'Kheda', isCorrect: false },
+      { text: 'Wai', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q54',
+    question: 'Opponent in Third Battle of Panipat?',
+    options: [
+      { text: 'Aurangzeb', isCorrect: false },
+      { text: 'Ahmad Shah Abdali', isCorrect: true },
+      { text: 'Adil Shah', isCorrect: false },
+      { text: 'Nizam', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q55',
+    question: 'Impact of Third Battle of Panipat?',
+    options: [
+      { text: 'Maratha expansion', isCorrect: false },
+      { text: 'Maratha decline', isCorrect: true },
+      { text: 'Treaty of Delhi', isCorrect: false },
+      { text: 'Rise of Peshwas', isCorrect: false }
+    ]
+  },
+
+  // 4. Important Treaties
+  {
+    id: 'q56',
+    question: 'Treaty of Purandar concluded Shivaji’s conflict with which empire?',
+    options: [
+      { text: 'Bijapur', isCorrect: false },
+      { text: 'Mughal', isCorrect: true },
+      { text: 'Maratha', isCorrect: false },
+      { text: 'British', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q57',
+    question: 'Treaty of Delhi granted tax collection rights in which year?',
+    options: [
+      { text: '1713', isCorrect: false },
+      { text: '1719', isCorrect: true },
+      { text: '1728', isCorrect: false },
+      { text: '1738', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q58',
+    question: 'Treaty of Mungishiv Village was signed after which battle?',
+    options: [
+      { text: 'Wai', isCorrect: false },
+      { text: 'Palkheda', isCorrect: true },
+      { text: 'Kheda', isCorrect: false },
+      { text: 'Purandar', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q59',
+    question: 'Treaty transferring Malwa to Marathas?',
+    options: [
+      { text: 'Treaty of Purandar', isCorrect: false },
+      { text: 'Treaty of Delhi', isCorrect: false },
+      { text: 'Treaty of Mungishiv', isCorrect: false },
+      { text: 'Treaty of Durai Sarai', isCorrect: true }
+    ]
+  },
+
+  // 5. True or False
+  {
+    id: 'q60',
+    question: 'Shambhaji was succeeded by Rajaram.',
+    options: [
+      { text: 'True', isCorrect: true },
+      { text: 'False', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q61',
+    question: 'Balaji Vishwanath signed the Treaty of Durai Sarai.',
+    options: [
+      { text: 'True', isCorrect: false },
+      { text: 'False', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q62',
+    question: 'Baji Rao I was known as "Machiavelli" of Maratha.',
+    options: [
+      { text: 'True', isCorrect: true },
+      { text: 'False', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q63',
+    question: 'The Ashtapradhan Mandal included a Minister of Foreign Affairs.',
+    options: [
+      { text: 'True', isCorrect: false },
+      { text: 'False', isCorrect: true }
+    ]
+  },
+
+  // 6. Fill in the Blanks
+  {
+    id: 'q64',
+    question: 'Shambhaji was killed in the Battle of ______ in 1689.',
+    options: [
+      { text: 'Wai', isCorrect: true },
+      { text: 'Panipat', isCorrect: false },
+      { text: 'Palkheda', isCorrect: false },
+      { text: 'Kheda', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q65',
+    question: 'Balaji Vishwanath is credited as the ______ of the Maratha kingdom.',
+    options: [
+      { text: 'Founder', isCorrect: false },
+      { text: 'Re-founder', isCorrect: true },
+      { text: 'Conqueror', isCorrect: false },
+      { text: 'Protector', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q66',
+    question: 'The Treaty of ______ allowed Marathas to collect taxes from six Deccan provinces.',
+    options: [
+      { text: 'Purandar', isCorrect: false },
+      { text: 'Delhi', isCorrect: true },
+      { text: 'Mungishiv', isCorrect: false },
+      { text: 'Durai Sarai', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q67',
+    question: 'Rajaram established ______ as his capital in 1699.',
+    options: [
+      { text: 'Pune', isCorrect: false },
+      { text: 'Raigad', isCorrect: false },
+      { text: 'Satara', isCorrect: true },
+      { text: 'Surat', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q68',
+    question: 'In 1665, the conflict between Shivaji and the Mughals ended with the ______.',
+    options: [
+      { text: 'Treaty of Delhi', isCorrect: false },
+      { text: 'Treaty of Purandar', isCorrect: true },
+      { text: 'Treaty of Mungishiv', isCorrect: false },
+      { text: 'Treaty of Durai Sarai', isCorrect: false }
+    ]
+  },
+
+  // 7. Match the Following
+  {
+    id: 'q69',
+    question: 'SKIP: Match the Peshwa with their tenure:',
+    options: [
+      { text: 'A. Balaji Vishwanath - 2. 1713-1720', isCorrect: true },
+      { text: 'B. Baji Rao I - 1. 1720-1740', isCorrect: true },
+      { text: 'C. Balaji Bajirao - 4. Not applicable', isCorrect: true },
+      { text: 'D. Baji Rao II - 3. 1761-1803', isCorrect: true }
+    ]
+  },
+  {
+    id: 'q70',
+    question: 'SKIP: Match the Battle with the Outcome:',
+    options: [
+      { text: 'A. Palkheda - 3. Treaty Signed', isCorrect: true },
+      { text: 'B. Wai - 2. Shambhaji Killed', isCorrect: true },
+      { text: 'C. Panipat - 1. Maratha Decline', isCorrect: true },
+      { text: 'D. Kheda - 4. Tarabai Defeated', isCorrect: true }
+    ]
+  },
+
+  // 8. Assertion and Reason
+  {
+    id: 'q71',
+    question: 'Assertion (A): Baji Rao I initiated the Maratha expansion into North India.\nReason (R): He never faced defeat in battle during his tenure.',
+    options: [
+      { text: 'A. Both A and R are true and R is the correct explanation of A', isCorrect: true },
+      { text: 'B. Both A and R are true but R is not the correct explanation of A', isCorrect: false },
+      { text: 'C. A is true but R is false', isCorrect: false },
+      { text: 'D. A is false but R is true', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q72',
+    question: 'Assertion (A): Shivaji looted Surat in 1664.\nReason (R): This event led to the Treaty of Purandar.',
+    options: [
+      { text: 'A. Both A and R are true and R is the correct explanation of A', isCorrect: false },
+      { text: 'B. Both A and R are true but R is not the correct explanation of A', isCorrect: false },
+      { text: 'C. A is true but R is false', isCorrect: true },
+      { text: 'D. A is false but R is true', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q73',
+    question: 'Assertion (A): Balaji Vishwanath signed a treaty with the Sayyid brothers.\nReason (R): This treaty granted Marathas the right to collect chauth and sardeshmukhi.',
+    options: [
+      { text: 'A. Both A and R are true and R is the correct explanation of A', isCorrect: true },
+      { text: 'B. Both A and R are true but R is not the correct explanation of A', isCorrect: false },
+      { text: 'C. A is true but R is false', isCorrect: false },
+      { text: 'D. A is false but R is true', isCorrect: false }
+    ]
+  },
+
+  // 9. Complex Reasoning
+  {
+    id: 'q74',
+    question: 'If Balaji Vishwanath had not signed the Treaty of Delhi in 1719, which of the following might have been the immediate consequence?',
+    options: [
+      { text: 'A. Marathas would have lost Malwa', isCorrect: false },
+      { text: 'B. Marathas would not have been able to collect chauth', isCorrect: true },
+      { text: 'C. Baji Rao I would not have been appointed', isCorrect: false },
+      { text: 'D. Shivaji would have reclaimed his empire', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q75',
+    question: 'Considering the roles within Ashtapradhan Mandal, who would most likely handle a legal dispute?',
+    options: [
+      { text: 'A. Peshwa', isCorrect: false },
+      { text: 'B. Nyayadhish', isCorrect: true },
+      { text: 'C. Sumant', isCorrect: false },
+      { text: 'D. Senapati', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q76',
+    question: 'Which of the following events directly led to Shambhaji\'s assassination?',
+    options: [
+      { text: 'A. Shivaji’s looting of Surat', isCorrect: false },
+      { text: 'B. Saibai sheltering Akbar', isCorrect: true },
+      { text: 'C. The Treaty of Purandar', isCorrect: false },
+      { text: 'D. The Battle of Panipat', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q77',
+    question: 'Which Peshwa\'s tenure overlapped with the signing of the Treaty of Purandar?',
+    options: [
+      { text: 'A. Balaji Vishwanath', isCorrect: true },
+      { text: 'B. Baji Rao I', isCorrect: false },
+      { text: 'C. Balaji Bajirao', isCorrect: false },
+      { text: 'D. Baji Rao II', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q78',
+    question: 'Identify the chronological order of the following events: Treaty of Purandar, Shivaji loots Surat, Battle of Palkheda.',
+    options: [
+      { text: 'A. Shivaji loots Surat → Treaty of Purandar → Battle of Palkheda', isCorrect: true },
+      { text: 'B. Treaty of Purandar → Shivaji loots Surat → Battle of Palkheda', isCorrect: false },
+      { text: 'C. Shivaji loots Surat → Battle of Palkheda → Treaty of Purandar', isCorrect: false },
+      { text: 'D. Battle of Palkheda → Shivaji loots Surat → Treaty of Purandar', isCorrect: false }
+    ]
+  },
+
+  // 10. Short Answer Type
+  {
+    id: 'q79',
+    question: 'Name the Maratha ruler who established Satara as the capital.',
+    options: [
+      { text: 'Rajaram', isCorrect: true },
+      { text: 'Shivaji', isCorrect: false },
+      { text: 'Shambhaji', isCorrect: false },
+      { text: 'Shahu', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q80',
+    question: 'Which treaty allowed Marathas to collect sardeshmukhi from Deccan provinces?',
+    options: [
+      { text: 'Treaty of Purandar', isCorrect: false },
+      { text: 'Treaty of Delhi', isCorrect: true },
+      { text: 'Treaty of Mungishiv', isCorrect: false },
+      { text: 'Treaty of Durai Sarai', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q81',
+    question: 'Who was known as the "Fighting Peshwa"?',
+    options: [
+      { text: 'Baji Rao I', isCorrect: true },
+      { text: 'Balaji Vishwanath', isCorrect: false },
+      { text: 'Balaji Bajirao', isCorrect: false },
+      { text: 'Shahu', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q82',
+    question: 'Which Peshwa signed the Treaty of Mungishiv Village?',
+    options: [
+      { text: 'Baji Rao I', isCorrect: true },
+      { text: 'Balaji Vishwanath', isCorrect: false },
+      { text: 'Balaji Bajirao', isCorrect: false },
+      { text: 'Shahu', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q83',
+    question: 'Who was the Maratha emperor during the Third Battle of Panipat?',
+    options: [
+      { text: 'Balaji Bajirao (Baji Rao II)', isCorrect: true },
+      { text: 'Baji Rao I', isCorrect: false },
+      { text: 'Shahu', isCorrect: false },
+      { text: 'Balaji Vishwanath', isCorrect: false }
+    ]
+  },
+
+  // 11. Critical Thinking
+  {
+    id: 'q84',
+    question: 'Analyze how the assassination of Afzal Khan impacted Shivaji\'s relationship with Adil Shah.',
+    options: [
+      { text: 'A. Strengthened their alliance', isCorrect: false },
+      { text: 'B. Forced Shivaji to surrender', isCorrect: false },
+      { text: 'C. Led to Adil Shah taking Shahaji hostage', isCorrect: true },
+      { text: 'D. Had no significant impact', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q85',
+    question: 'Evaluate the significance of the Treaty of Purandar in Shivaji\'s reign.',
+    options: [
+      { text: 'A. It marked the end of Shivaji\'s military campaigns', isCorrect: false },
+      { text: 'B. It established Shivaji as a recognized ruler by the Mughals', isCorrect: true },
+      { text: 'C. It resulted in Shivaji losing all his forts', isCorrect: false },
+      { text: 'D. It led to the death of Shivaji', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q86',
+    question: 'Determine the role of Balaji Vishwanath in the rise of the Peshwa’s power.',
+    options: [
+      { text: 'A. He diminished the role of Peshwa', isCorrect: false },
+      { text: 'B. He established the Peshwa as a central authority', isCorrect: true },
+      { text: 'C. He opposed the Peshwa\'s influence', isCorrect: false },
+      { text: 'D. He was a minor figure with no impact', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q87',
+    question: 'Assess why the Third Battle of Panipat was pivotal for the Maratha Empire.',
+    options: [
+      { text: 'A. It was the first major victory of the Marathas', isCorrect: false },
+      { text: 'B. It led to the expansion of the Maratha Empire', isCorrect: false },
+      { text: 'C. It caused a significant decline in Maratha power', isCorrect: true },
+      { text: 'D. It resulted in the signing of the Treaty of Delhi', isCorrect: false }
+    ]
+  },
+
+  // 12. Application-Based Questions
+  {
+    id: 'q88',
+    question: 'If the Treaty of Durai Sarai had not been signed, which region would the Marathas likely have contested next?',
+    options: [
+      { text: 'A. Malwa', isCorrect: true },
+      { text: 'B. Gujarat', isCorrect: false },
+      { text: 'C. Deccan', isCorrect: false },
+      { text: 'D. Bengal', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q89',
+    question: 'Predict the potential outcome if Balaji Bajirao had not participated in the Third Battle of Panipat.',
+    options: [
+      { text: 'A. Marathas would have expanded further', isCorrect: false },
+      { text: 'B. Marathas would have avoided decline', isCorrect: true },
+      { text: 'C. Marathas would have allied with Ahmad Shah Abdali', isCorrect: false },
+      { text: 'D. Marathas would have focused on southern expansion', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q90',
+    question: 'How did the Treaty of Delhi in 1719 enhance Maratha influence in the Deccan?',
+    options: [
+      { text: 'A. By allowing them to build forts', isCorrect: false },
+      { text: 'B. By granting them tax collection rights', isCorrect: true },
+      { text: 'C. By forming military alliances', isCorrect: false },
+      { text: 'D. By securing diplomatic recognition', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q91',
+    question: 'What administrative innovation did Rajaram introduce to strengthen governance?',
+    options: [
+      { text: 'A. Creation of the Peshwa position', isCorrect: false },
+      { text: 'B. Establishment of the Ashtapradhan Mandal', isCorrect: false },
+      { text: 'C. Creation of the delegate post', isCorrect: true },
+      { text: 'D. Introduction of the Hindu Padpadshahi principle', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q92',
+    question: 'Explain the role of Saibai in the conflict between Shambhaji and the Mughals.',
+    options: [
+      { text: 'A. She allied with the Mughals', isCorrect: false },
+      { text: 'B. She sheltered Aurangzeb’s rebellious son', isCorrect: true },
+      { text: 'C. She negotiated peace treaties', isCorrect: false },
+      { text: 'D. She led the Maratha army', isCorrect: false }
+    ]
+  },
+
+  // 13. Synthesis Questions
+  {
+    id: 'q93',
+    question: 'Combine the impact of Shivaji’s early victories and the Treaty of Purandar to explain his legacy.',
+    options: [
+      { text: 'A. Shivaji’s victories weakened his position, leading to his downfall', isCorrect: false },
+      { text: 'B. Shivaji’s victories established his authority, while the treaty secured his recognition', isCorrect: true },
+      { text: 'C. Shivaji’s victories had no impact on his legacy', isCorrect: false },
+      { text: 'D. The Treaty of Purandar nullified Shivaji’s early achievements', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q94',
+    question: 'Link the roles within Ashtapradhan Mandal to the administrative efficiency of Shivaji’s empire.',
+    options: [
+      { text: 'A. The division of roles led to confusion and inefficiency', isCorrect: false },
+      { text: 'B. Clear division of roles enhanced administrative efficiency', isCorrect: true },
+      { text: 'C. The absence of key roles weakened the administration', isCorrect: false },
+      { text: 'D. Overlapping roles caused power struggles', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q95',
+    question: 'Correlate the military strategies of Shivaji with the eventual defeat at Purandar.',
+    options: [
+      { text: 'A. Shivaji’s lack of military strategy led to his defeat', isCorrect: false },
+      { text: 'B. Shivaji’s guerrilla warfare was ineffective against the Mughals', isCorrect: false },
+      { text: 'C. Despite effective strategies, overwhelming Mughal power led to the treaty', isCorrect: true },
+      { text: 'D. Shivaji’s alliances caused his defeat', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q96',
+    question: 'Integrate the contributions of Balaji Vishwanath and Baji Rao I to the expansion of the Maratha Empire.',
+    options: [
+      { text: 'A. Balaji Vishwanath focused on southern expansion while Baji Rao I expanded north', isCorrect: false },
+      { text: 'B. Balaji Vishwanath laid administrative foundations which Baji Rao I expanded militarily', isCorrect: true },
+      { text: 'C. Both focused solely on administrative tasks', isCorrect: false },
+      { text: 'D. Both were primarily involved in internal governance', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q97',
+    question: 'Synthesize the reasons behind the Maratha decline post-Panipat with earlier administrative changes.',
+    options: [
+      { text: 'A. Strong administration prevented decline', isCorrect: false },
+      { text: 'B. Weak administrative structures led to strategic failures', isCorrect: true },
+      { text: 'C. Administrative changes had no role in the decline', isCorrect: false },
+      { text: 'D. Administrative strength caused overexpansion', isCorrect: false }
+    ]
+  },
+
+  // 14. Critical Analysis
+  {
+    id: 'q98',
+    question: 'Critique the effectiveness of the Ashtapradhan Mandal in managing Shivaji’s empire.',
+    options: [
+      { text: 'A. Highly effective, leading to rapid expansion', isCorrect: false },
+      { text: 'B. Moderately effective, ensuring administrative stability', isCorrect: true },
+      { text: 'C. Ineffective, resulting in frequent internal conflicts', isCorrect: false },
+      { text: 'D. Irrelevant, as it played no significant role', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q99',
+    question: 'Analyze the strategic importance of the Treaty of Mungishiv Village for the Marathas.',
+    options: [
+      { text: 'A. It marked the end of Maratha expansion', isCorrect: false },
+      { text: 'B. It secured new territories and established authority', isCorrect: true },
+      { text: 'C. It weakened Maratha influence in Deccan', isCorrect: false },
+      { text: 'D. It allied Marathas with the Mughals', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q100',
+    question: 'Evaluate how Tarabai’s defeat in the Battle of Kheda influenced Maratha politics.',
+    options: [
+      { text: 'A. It led to the dissolution of the Maratha Empire', isCorrect: false },
+      { text: 'B. It resulted in the consolidation of power under Shahu', isCorrect: true },
+      { text: 'C. It weakened the position of the Peshwas', isCorrect: false },
+      { text: 'D. It strengthened Tarabai’s claim to the throne', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q101',
+    question: 'Discuss the role of external alliances in the rise of the Maratha Empire under Balaji Vishwanath.',
+    options: [
+      { text: 'A. External alliances weakened Maratha autonomy', isCorrect: false },
+      { text: 'B. Alliances with Sayyid brothers enhanced Maratha influence', isCorrect: true },
+      { text: 'C. External alliances had no significant impact', isCorrect: false },
+      { text: 'D. Alliances with European powers facilitated expansion', isCorrect: false }
+    ]
+  },
+  {
+    id: 'q102',
+    question: 'Assess the significance of Shivaji’s spiritual teacher in shaping his leadership.',
+    options: [
+      { text: 'A. Ramdas Samarth instilled military tactics', isCorrect: false },
+      { text: 'B. Ramdas Samarth influenced his administrative policies', isCorrect: false },
+      { text: 'C. Ramdas Samarth had no impact on Shivaji’s leadership', isCorrect: false },
+      { text: 'D. Ramdas Samarth provided spiritual guidance and moral support', isCorrect: true }
+    ]
+  }
+];
+
+
+
+        // Function to shuffle an array using Fisher-Yates algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Function to render the questions dynamically
+        function renderQuestions() {
+            const quizForm = document.getElementById('quizForm');
+            const questionsArray = getQuestions(); // Retrieve the questions array
+            if (!questionsArray || !Array.isArray(questionsArray) || questionsArray.length < 25) {
+                quizForm.innerHTML = '<p>Insufficient questions available. Please ensure there are at least 25 questions in the questions array.</p>';
+                return;
+            }
+
+            // Randomly select 25 questions from the available questions
+            const selectedQuestions = getRandomQuestions(questionsArray, 25);
+
+            // Assign shuffledQuestions to the global variable
+            shuffledQuestions = shuffleArray([...selectedQuestions]); // Create a copy and shuffle
+
+            shuffledQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.id = `question-${index + 1}`; // Assign unique ID
+
+                // Question text
+                const questionText = document.createElement('p');
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+                // Options
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                // Shuffle options and assign back to q.options
+                q.options = shuffleArray([...q.options]);
+                const shuffledOptions = q.options;
+
+                // Assign labels A, B, C, D dynamically
+                const labels = ['A', 'B', 'C', 'D'];
+
+                shuffledOptions.forEach((option, optIndex) => {
+                    const optionId = `${q.id}_option${optIndex + 1}`; // Unique ID for each option
+
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.id = optionId;
+                    radioInput.name = q.id;
+                    radioInput.value = labels[optIndex]; // Assign label as value
+
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    label.textContent = `${labels[optIndex]}) ${option.text}`;
+
+                    optionsDiv.appendChild(radioInput);
+                    optionsDiv.appendChild(label);
+
+                    // Add Attempted Class when an option is selected
+                    radioInput.addEventListener('change', function() {
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink && !questionMapLink.classList.contains('correct') && !questionMapLink.classList.contains('incorrect')) {
+                            questionMapLink.classList.add('attempted');
+                        }
+                    });
+                });
+
+                questionDiv.appendChild(optionsDiv);
+
+                // Add Feedback Div Below Options
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                feedbackDiv.id = `feedback-${index + 1}`; // Unique ID for each feedback div
+                questionDiv.appendChild(feedbackDiv);
+
+                quizForm.appendChild(questionDiv);
+            });
+
+            generateQuestionMap(shuffledQuestions.length);
+        }
+
+        // Function to retrieve the questions array
+        function getQuestions() {
+            // Replace this with your actual questions array
+            return questions; // Assuming 'questions' is defined globally
+        }
+
+        // Function to randomly select n questions from the questions array
+        function getRandomQuestions(questionsArray, n) {
+            const shuffled = shuffleArray([...questionsArray]);
+            return shuffled.slice(0, n);
+        }
+
+        // Function to generate the Question Map links
+        function generateQuestionMap(totalQuestions) {
+            const questionLinksDiv = document.getElementById('questionLinks');
+            questionLinksDiv.innerHTML = ''; // Clear any existing links
+
+            for (let i = 1; i <= totalQuestions; i++) {
+                const link = document.createElement('a');
+                link.href = `#question-${i}`;
+                link.classList.add('question-link');
+                link.textContent = `Q${i}`;
+
+                questionLinksDiv.appendChild(link);
+            }
+        }
+
+        // Timer Functionality
+        function startTimer(duration, display) {
+            let timer = duration, minutes, seconds;
+            const countdown = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                display.textContent = minutes + ":" + seconds;
+
+                // Add alert class when time is less than 1 minute
+                if (timer <= 60 && timer > 0) { // 60 seconds = 1 minute
+                    display.classList.add('alert');
+                }
+
+                if (--timer < 0) {
+                    clearInterval(countdown);
+                    autoSubmit();
+                }
+            }, 1000);
+        }
+
+        // Function to automatically submit the quiz when time is up
+        function autoSubmit() {
+            alert("Time's up! The quiz will now be submitted.");
+            checkAnswers();
+        }
+
+        // Initialize the quiz on page load
+        window.onload = function () {
+            renderQuestions(); // Render questions on page load
+            const tenMinutes = 60 * 10, // 10 minutes in seconds
+                  display = document.getElementById('timer');
+            startTimer(tenMinutes, display);
+        };
+
+        // Function to check answers and display the result
+        function checkAnswers() {
+            let score = 0;
+            let totalQuestions = shuffledQuestions.length; // Total number of questions
+
+            shuffledQuestions.forEach((q, index) => { // Iterate over each question
+                const selectedOption = document.querySelector(`input[name="${q.id}"]:checked`);
+                const feedbackDiv = document.getElementById(`feedback-${index + 1}`);
+                
+                if (selectedOption) {
+                    // Get the selected label (A, B, C, D)
+                    const selectedLabel = selectedOption.value;
+                    // Map label to option index
+                    const labelIndex = ['A', 'B', 'C', 'D'].indexOf(selectedLabel);
+                    if (labelIndex !== -1 && q.options[labelIndex].isCorrect) {
+                        score += 1; // Add 1 mark for correct answer
+
+                        // Mark the question link as correct in the Question Map
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink) {
+                            questionMapLink.classList.add('correct');
+                            questionMapLink.classList.remove('incorrect', 'attempted');
+                        }
+
+                        // Update Feedback Below the Question
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Right';
+                            feedbackDiv.classList.add('right');
+                            feedbackDiv.classList.remove('wrong', 'not-attempted');
+                        }
+                    } else {
+                        score -= 0.5; // Deduct 0.5 marks for incorrect answer
+
+                        // Mark the question link as incorrect in the Question Map
+                        const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                        if (questionMapLink) {
+                            questionMapLink.classList.add('incorrect');
+                            questionMapLink.classList.remove('correct', 'attempted');
+                        }
+
+                        // Update Feedback Below the Question
+                        if (feedbackDiv) {
+                            feedbackDiv.textContent = 'Wrong';
+                            feedbackDiv.classList.add('wrong');
+                            feedbackDiv.classList.remove('right', 'not-attempted');
+                        }
+                    }
+                } else {
+                    // If the question was not answered, mark as not attempted
+                    const questionMapLink = document.querySelector(`.question-map .question-link[href="#question-${index + 1}"]`);
+                    if (questionMapLink) {
+                        // Remove both classes if the question was not answered
+                        questionMapLink.classList.remove('correct', 'incorrect', 'attempted');
+                    }
+
+                    // Update Feedback Below the Question
+                    if (feedbackDiv) {
+                        feedbackDiv.textContent = 'Not Attempted';
+                        feedbackDiv.classList.add('not-attempted');
+                        feedbackDiv.classList.remove('right', 'wrong');
+                    }
+                }
+            });
+
+            // Round the score to one decimal place
+            score = Math.round(score * 10) / 10;
+
+            // Update the result in the Question Map Sidebar
+            const resultDiv = document.getElementById('result');
+            resultDiv.textContent = `You scored ${score} out of ${totalQuestions}`;
+
+            // Update the result below the questions list
+            const resultDivBelow = document.getElementById('resultBelow');
+            resultDivBelow.textContent = `You scored ${score} out of ${totalQuestions}`;
+
+            // Disable all inputs to prevent changes after submission
+            const inputs = document.querySelectorAll('input[type="radio"]');
+            inputs.forEach(input => {
+                input.disabled = true;
+            });
+
+            // Disable the submit buttons to prevent multiple submissions
+            const submitButton = document.getElementById('submitBtn');
+            submitButton.disabled = true;
+
+            const submitButtonBelow = document.getElementById('submitBtnBelow');
+            if (submitButtonBelow) {
+                submitButtonBelow.disabled = true;
+            }
+        }
+
+        // Toggle Question Map on small screens
+        const toggleBtn = document.getElementById('toggleQuestionMap');
+        const questionMap = document.getElementById('questionMap');
+
+        toggleBtn.addEventListener('click', () => {
+            questionMap.classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
